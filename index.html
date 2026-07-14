@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>Robotic Mowing Business Case Generator</title>
+<link href="styles.css" rel="stylesheet"/>
+</head>
+<body>
+<div class="wrap">
+<div class="print-report" id="printReport"></div>
+<header class="hero">
+<div class="eyebrow">Independent mowing assessment</div>
+<h1>Robotic Mowing Business Case Generator</h1>
+<p class="sub">A practical comparison of conventional and hybrid robotic mowing.</p>
+</header>
+<section class="question">
+<p><strong>What proportion of routine mowing should be carried out robotically?</strong> This Generator compares conventional mowing with a hybrid robotic strategy using your own site, machine and supplier figures.</p>
+</section>
+<section class="summary">
+<h2>Business Case Summary</h2>
+<p class="summary-note">These figures update automatically as you change the inputs below.</p>
+<div class="kpis">
+<div class="kpi"><div class="label">Robotic mowers required</div><div class="value" id="kRobots">1</div></div>
+<div class="kpi"><div class="label">Installed system cost</div><div class="value" id="kSystem">£35,000</div></div>
+<div class="kpi"><div class="label">Annual cash saving</div><div class="value" id="kSaving">£0</div></div>
+<div class="kpi"><div class="label">Greenkeeper capacity released</div><div class="value" id="kHours">0 hrs</div></div>
+<div class="kpi"><div class="label">Annual value of released capacity</div><div class="value" id="kValue">£0</div></div>
+</div>
+<div class="message">
+<div class="message-title">The Real Value of Robotic Mowing</div>
+<strong>The greenkeeper capacity released is not treated as a financial saving.</strong>
+    It represents skilled staff time that can be redirected towards drainage improvements, tree and woodland management, bunker maintenance, irrigation, presentation and other higher-value improvement work. Its annual value is shown separately and is not added to the cash saving.
+  </div>
+</section>
+<section class="input-guide">
+<h2>Completing the assessment</h2>
+<div class="guide-grid">
+<div class="guide-item">
+<span class="guide-swatch user-swatch"></span>
+<div><strong>Information you enter</strong><br/>
+      The pale gold boxes require your site, machine or supplier figures.</div>
+</div>
+<div class="guide-item">
+<span class="guide-swatch assumption-swatch"></span>
+<div><strong>Default assumptions</strong><br/>
+      The pale blue boxes contain sensible starting values and normally need no change.</div>
+</div>
+</div>
+</section>
+<div class="grid">
+<section class="card">
+<h2>1. Your Site</h2>
+<div class="field user-field"><div><label>Club / Organisation</label><div class="note">This will appear on the printed Business Case.</div></div><div class="input"><input id="organisation" placeholder="e.g. Belfast Hills Golf Club" style="text-align:left" type="text" value=""/><span class="unit">text</span></div></div>
+<div class="field user-field"><div><label>Total managed mowing area</label><div class="note">For golf courses, enter the total fairway area. A reasonable estimate is normally sufficient.</div></div><div class="input"><input id="courseArea" type="number" value="80000"/><span class="unit">m²</span></div></div>
+<div class="field user-field"><div><label>Area to be mown robotically</label><div class="note">Enter a reasonable estimate, preferably on the generous side where spare robotic capacity can also maintain drier areas.</div></div><div class="input"><input id="robotPct" max="100" min="0" step="1" type="number" value="30"/><span class="unit">%</span><span class="derived" id="robotArea">(= 24,000 m²)</span></div></div>
+<div class="field user-field"><div><label>Hours required for one complete conventional cut</label><div class="note">Include preparation, travel, refuelling, cleaning and storing the mower.</div></div><div class="input"><input id="hoursPerCut" step="0.5" type="number" value="10"/><span class="unit">hours</span></div></div>
+<div class="field user-field"><div><label>Complete cuts per week</label></div><div class="input"><input id="cutsWeek" type="number" value="3"/><span class="unit">cuts/week</span></div></div>
+
+
+</section>
+<section class="card">
+<h2>2. Conventional Mowing</h2>
+<div class="field user-field"><div><label>Machine make &amp; model</label><div class="note">Existing or proposed conventional mower.</div></div><div class="input"><input id="mowerModel" style="text-align:left" type="text" value="Conventional mower"/><span class="unit">text</span></div></div>
+<div class="field user-field"><div><label>Purchase or replacement cost</label><div class="note">Cost of the conventional machine that would otherwise be used or purchased.</div></div><div class="input"><input id="mowerCost" type="number" value="65000"/><span class="unit">£</span></div></div>
+<div class="field user-field"><div><label>Diesel consumption while mowing</label></div><div class="input"><input id="dieselUse" step="0.1" type="number" value="6"/><span class="unit">litres/hour</span></div></div>
+
+<div class="field user-field"><div><label>Annual maintenance and repairs</label></div><div class="input"><input id="mowerMaint" type="number" value="6000"/><span class="unit">£/year</span></div></div>
+
+</section>
+<section class="card">
+<h2>3. Robotic Mowing</h2>
+<div class="field user-field"><div><label>Machine make &amp; model</label><div class="note">Use the machine being quoted or evaluated.</div></div><div class="input"><input id="robotModel" style="text-align:left" type="text" value="Robotic mower"/><span class="unit">text</span></div></div>
+<div class="field user-field"><div><label>Cost per installed robotic system</label><div class="note">Supplied, installed and commissioned.</div></div><div class="input"><input id="robotCost" type="number" value="35000"/><span class="unit">£</span></div></div>
+<div class="field user-field"><div><label>Expected practical mowing capacity</label></div><div class="input"><input id="robotCapacity" type="number" value="40000"/><span class="unit">m²/day</span></div></div>
+
+
+
+</section>
+<section class="card">
+<h2>4. Assumptions</h2>
+<p class="note">The conventional mower continues to maintain the fairways outside the robot area.</p>
+<p class="note">Annual cash savings include direct operating costs only: diesel, electricity, maintenance and repairs.</p>
+<p class="note">Greenkeeper employment costs are assumed to remain unchanged. Released capacity is shown separately and is not added to the annual cash saving.</p>
+<p class="note">The remaining conventional mower maintenance allowance is reduced in proportion to the area transferred to robots.</p>
+</section>
+</div><details class="card assumptions-panel">
+<summary>
+<span>Default Assumptions</span>
+<small>Open only if you have more accurate figures</small>
+</summary>
+<p class="assumptions-intro">
+    These pale blue values are suitable for most initial assessments. They remain fully editable.
+  </p>
+<div class="assumptions-grid"><div class="field assumption-field"><div><label>Mowing weeks per year</label></div><div class="input"><input id="weeksYear" type="number" value="30"/><span class="unit">weeks/year</span></div></div><div class="field assumption-field"><div><label>Average greenkeeper hourly cost</label><div class="note">Including National Insurance, pension and other employment costs.</div></div><div class="input"><input id="staffCost" step="0.5" type="number" value="18"/><span class="unit">£/hour</span></div></div><div class="field assumption-field"><div><label>Diesel price</label></div><div class="input"><input id="dieselPrice" step="0.01" type="number" value="1.15"/><span class="unit">£/litre</span></div></div><div class="field assumption-field"><div><label>Annual cost of retained backup / presentation mower</label><div class="note">For clubs moving fully or almost fully to robots while retaining one conventional mower.</div></div><div class="input"><input id="backupMowerCost" type="number" value="0"/><span class="unit">£/year</span></div></div><div class="field assumption-field"><div><label>Electricity price</label><div class="note">Annual electricity use is calculated from the area mown, using a planning allowance of 1.0 kWh per 1,000 m².</div></div><div class="input"><input id="electricityPrice" step="0.01" type="number" value="0.30"/><span class="unit">£/kWh</span></div></div><div class="field assumption-field"><div><label>Annual maintenance per robot</label></div><div class="input"><input id="robotMaint" type="number" value="1500"/><span class="unit">£/robot/year</span></div></div><div class="field assumption-field"><div><label>Robot supervision and routine attention</label><div class="note">Including routine checks, cleaning, freeing stuck or clogged machines and blade changes.</div></div><div class="input"><input id="supervision" step="0.5" type="number" value="5"/><span class="unit">hours/week</span></div></div></div>
+</details>
+<section class="results">
+<h2>Annual Cash Cost Comparison</h2>
+<table>
+<thead><tr><th>Cost item</th><th>Conventional mowing</th><th>Hybrid mowing</th></tr></thead>
+<tbody>
+<tr><td>Diesel / electricity</td><td id="cEnergy">£0</td><td id="hEnergy">£0</td></tr>
+<tr><td>Maintenance and repairs</td><td id="cMaint">£0</td><td id="hMaint">£0</td></tr>
+<tr class="total"><td>Total annual cash cost</td><td id="cTotal">£0</td><td id="hTotal">£0</td></tr>
+<tr class="saving"><td>Annual cash saving</td><td>—</td><td id="saving">£0</td></tr>
+</tbody>
+</table>
+</section>
+<div class="benefits">
+<section class="card">
+<h2>Capital Context</h2>
+<table>
+<tbody>
+<tr><td>Replacement conventional mower</td><td id="capMower">£65,000</td></tr>
+<tr><td>Robot system</td><td id="capRobot">£35,000</td></tr>
+</tbody>
+</table>
+</section>
+<section class="card">
+<h2>Benefits Not Included in the Financial Comparison</h2>
+<ul>
+<li>Skilled greenkeeper capacity released for course improvement work</li>
+<li>Reduced soil compaction and rutting on wet fairways</li>
+<li>Ability to maintain selected areas during prolonged wet weather when heavier machinery would risk damage</li>
+<li>More time for drainage, bunkers, presentation and detail work</li>
+<li>Reduced diesel use and emissions</li>
+<li>Improved winter presentation and playability</li>
+</ul>
+</section>
+</div>
+<p class="note" style="margin-top:22px"><strong>Create the report:</strong> choose “Download two-page PDF”. The PDF is created directly in A4 portrait format; no printer settings are required.</p>
+<div class="actions">
+<button class="primary" id="pdfBtn" type="button">Download two-page PDF</button>
+<button class="ghost" id="printPdfBtn" type="button">Open PDF to print</button>
+<span id="pdfStatus" style="margin-left:10px;font-weight:700;color:#183d27"></span>
+<button class="ghost" id="resetBtn" type="button">Reset to defaults</button>
+</div>
+<div class="footer">
+Developed independently by Maurice McKinley BSc CEng MICE. Manufacturer-neutral and not associated with any machinery supplier.<br/>
+Version 0.91 Beta · July 2026 · Simple Solutions are Often the Best.
+</div>
+</div>
+<script src="pdf-report.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
