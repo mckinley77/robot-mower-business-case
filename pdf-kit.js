@@ -35,7 +35,7 @@ function createPdfDoc(){
   const gbp=v=>(v<0?'-£':'£')+Math.abs(Math.round(v)).toLocaleString('en-GB');
   const num=v=>Math.round(v).toLocaleString('en-GB');
 
-  function finalize(){
+  function finalize(title){
     const objs=[];const add=o=>{objs.push(o);return objs.length;};
     const f1=add('<< /Type /Font /Subtype /Type1 /BaseFont /Times-Roman /Encoding /WinAnsiEncoding >>');
     const f2=add('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>');
@@ -51,11 +51,15 @@ endstream`);
     for(const cid of contentIds)pageIds.push(add(`<< /Type /Page /Parent ${parentId} 0 R /MediaBox [0 0 ${W} ${H}] /Resources << /Font << /F1 ${f1} 0 R /F2 ${f2} 0 R /F3 ${f3} 0 R /F4 ${f4} 0 R >> /XObject << /Im1 ${img} 0 R >> >> /Contents ${cid} 0 R >>`));
     const pagesObj=add(`<< /Type /Pages /Kids [${pageIds.map(i=>i+' 0 R').join(' ')}] /Count ${pageIds.length} >>`);
     const catalog=add(`<< /Type /Catalog /Pages ${pagesObj} 0 R >>`);
+    const now=new Date();
+    const pad=n=>String(n).padStart(2,'0');
+    const pdfDate=`D:${now.getFullYear()}${pad(now.getMonth()+1)}${pad(now.getDate())}${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
+    const info=add(`<< /Title (${esc(title||'Robotic Mowing Business Case')}) /Author (Maurice McKinley) /Producer (Robotic Mowing Business Case Generator) /CreationDate (${pdfDate}) >>`);
     let pdf=`%PDF-1.4\n%âãÏÓ\n`,offsets=[0];
     objs.forEach((o,i)=>{offsets[i+1]=pdf.length;pdf+=`${i+1} 0 obj\n${o}\nendobj\n`;});
     const xref=pdf.length;pdf+=`xref\n0 ${objs.length+1}\n0000000000 65535 f \n`;
     for(let i=1;i<=objs.length;i++)pdf+=String(offsets[i]).padStart(10,'0')+' 00000 n \n';
-    pdf+=`trailer\n<< /Size ${objs.length+1} /Root ${catalog} 0 R >>\nstartxref\n${xref}\n%%EOF`;
+    pdf+=`trailer\n<< /Size ${objs.length+1} /Root ${catalog} 0 R /Info ${info} 0 R >>\nstartxref\n${xref}\n%%EOF`;
     const u8=new Uint8Array(pdf.length);for(let i=0;i<pdf.length;i++)u8[i]=pdf.charCodeAt(i)&255;return u8;
   }
 

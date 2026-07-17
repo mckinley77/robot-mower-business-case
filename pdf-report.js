@@ -4,6 +4,7 @@ function buildBusinessCasePDF(r, organisation){
   const {W,H,M,black,green,pale,panel,rule,page,rect,line,text,para,heading,wrap,gbp,num,finalize}=createPdfDoc();
   const org=(organisation||'').trim();
   const savingValue=gbp(Math.abs(r.saving));
+  const printedOn=new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
 
   // PAGE 1 - closely follows the approved Writer design.
   let c=page(),y=48;
@@ -13,6 +14,7 @@ function buildBusinessCasePDF(r, organisation){
   if(org){y=105;text(c,org,M,y,11.7,'F2',green);}
   y=org?132:111;
   text(c,'Maurice McKinley BSc CEng MICE - The Sustainable Golf Course Project',M,y,11.2,'F1',black);
+  text(c,'Printed on '+printedOn,W-M,y,9.6,'F3',black,'right');
   y+=47;
   y=heading(c,'Executive Summary',y,14.6);
   y=para(c,'This assessment compares the annual cash costs and operational benefits of replacing part or all of conventional mowing with robotic mowing.',M,y,11.6,W-2*M,15.4,'F1');y+=7;
@@ -84,5 +86,5 @@ function buildBusinessCasePDF(r, organisation){
   text(c,'Tel: +44 7544 096463',contactX,fy+16,9.0,'F1',black);
   text(c,'Website: www.mmck.solutions',contactX,fy+32,9.0,'F1',black);
 
-  return finalize();
+  return finalize('Robotic Mowing Business Case'+(org?' - '+org:''));
 }

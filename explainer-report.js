@@ -8,13 +8,14 @@ function buildMethodologyPDF(r, organisation){
   const price=v=>'£'+v.toFixed(2);
   const hybridEnergy=r.hybridFuel+r.hybridElectric;
   const hybridMaintTotal=r.hybridMowerMaint+r.hybridRobotMaint+(r.backupMowerCost||0);
+  const printedOn=new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
 
   function calcRow(c,y,label,formula,figureLines,result){
     text(c,label,M,y,11.4,'F2',green);y+=15;
     y=para(c,formula,M,y,10.3,W-2*M,13.6,'F3',black);y+=2;
     figureLines.forEach(f=>{y=para(c,f,M,y,10.6,W-2*M,13.9,'F1',black);});y+=2;
     rect(c,M,y,W-2*M,20,pale,null);
-    text(c,result,M+8,y+13.5,10.8,'F2',black);
+    text(c,result,M+8,y+5,10.8,'F2',black);
     return y+20+16;
   }
 
@@ -26,6 +27,7 @@ function buildMethodologyPDF(r, organisation){
   if(org){y=98;text(c,org,M,y,11.3,'F2',green);}
   y=org?122:104;
   text(c,'Maurice McKinley BSc CEng MICE - The Sustainable Golf Course Project',M,y,10.8,'F1',black);
+  text(c,'Printed on '+printedOn,W-M,y,9.4,'F3',black,'right');
   y+=38;
 
   y=heading(c,'Purpose of This Guide',y,13.6);
@@ -91,7 +93,7 @@ function buildMethodologyPDF(r, organisation){
     'Capacity released: '+num(r.mowingHoursAvoided)+' - '+num(r.supervisionHours)+' = '+num(r.extraHours)+' hrs/year'];
   capFigures.forEach(f=>{y=para(c,f,M,y,10.6,W-2*M,13.9,'F1');});y+=6;
   rect(c,M,y,W-2*M,20,pale,null);
-  text(c,'Indicative value: '+num(r.extraHours)+' hrs × '+price(r.staffCost)+'/hr = '+gbp(r.extraValue)+'/year (capacity, not cash saved)',M+8,y+13.5,10.5,'F2',black);
+  text(c,'Indicative value: '+num(r.extraHours)+' hrs × '+price(r.staffCost)+'/hr = '+gbp(r.extraValue)+'/year (capacity, not cash saved)',M+8,y+5,10.5,'F2',black);
   y+=36;
 
   if(y>580){c=page();y=54;}
@@ -130,5 +132,5 @@ function buildMethodologyPDF(r, organisation){
   text(c,'Tel: +44 7544 096463',contactX,fy+15,8.8,'F1',black);
   text(c,'Website: www.mmck.solutions',contactX,fy+30,8.8,'F1',black);
 
-  return finalize();
+  return finalize('How the Figures Are Derived'+(org?' - '+org:''));
 }
