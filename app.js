@@ -95,12 +95,53 @@
     }catch(e){console.error(e);status("PDF could not be opened",true);alert(e.message);}
   }
 
-  function updateStickyOffset(){
-    const header=document.querySelector(".sticky-header");
-    if(header) document.documentElement.style.setProperty("--sticky-offset",header.offsetHeight+"px");
+  const header=document.querySelector(".sticky-header");
+  const TOP_THRESHOLD=4;
+
+  function headerVisibleHeight(){
+    return header && !header.classList.contains("is-hidden") ? header.offsetHeight : 0;
   }
+  function updateStickyOffset(){
+    if(header) document.documentElement.style.setProperty("--sticky-offset",headerVisibleHeight()+"px");
+  }
+  function hideHeader(){
+    if(!header || header.classList.contains("is-hidden")) return;
+    header.classList.add("is-hidden");
+    updateStickyOffset();
+  }
+  function showHeader(){
+    if(!header || !header.classList.contains("is-hidden")) return;
+    header.classList.remove("is-hidden");
+    updateStickyOffset();
+  }
+
+  if(header){
+    let lastY=window.scrollY;
+    let ticking=false;
+    function onScroll(){
+      const y=Math.max(0,window.scrollY);
+      if(y<=TOP_THRESHOLD) showHeader();
+      else if(y>lastY && y>header.offsetHeight) hideHeader();
+      lastY=y;
+      ticking=false;
+    }
+    window.addEventListener("scroll",()=>{
+      if(!ticking){requestAnimationFrame(onScroll);ticking=true;}
+    },{passive:true});
+
+    // Keep focused fields clear of the header: pull it out of the way as
+    // soon as a field gets focus, then re-check once the on-screen
+    // keyboard has finished resizing the viewport.
+    document.addEventListener("focusin",e=>{
+      if(!e.target.matches("input,textarea")) return;
+      hideHeader();
+      requestAnimationFrame(()=>e.target.scrollIntoView({block:"center"}));
+    });
+  }
+
   window.addEventListener("resize",updateStickyOffset);
   window.addEventListener("orientationchange",updateStickyOffset);
+  window.visualViewport?.addEventListener("resize",updateStickyOffset);
   updateStickyOffset();
 
   ids.forEach(id=>document.getElementById(id)?.addEventListener("input",recalc));
