@@ -98,44 +98,42 @@
   const header=document.querySelector(".sticky-header");
   const TOP_THRESHOLD=4;
 
-  function headerVisibleHeight(){
-    return header && !header.classList.contains("is-hidden") ? header.offsetHeight : 0;
-  }
   function updateStickyOffset(){
-    if(header) document.documentElement.style.setProperty("--sticky-offset",headerVisibleHeight()+"px");
+    if(header) document.documentElement.style.setProperty("--sticky-offset",header.offsetHeight+"px");
   }
-  function hideHeader(){
-    if(!header || header.classList.contains("is-hidden")) return;
-    header.classList.add("is-hidden");
-    updateStickyOffset();
+  function collapseHero(){
+    if(!header || header.classList.contains("is-collapsed")) return;
+    header.classList.add("is-collapsed");
   }
-  function showHeader(){
-    if(!header || !header.classList.contains("is-hidden")) return;
-    header.classList.remove("is-hidden");
-    updateStickyOffset();
+  function expandHero(){
+    if(!header || !header.classList.contains("is-collapsed")) return;
+    header.classList.remove("is-collapsed");
   }
 
   if(header){
-    let lastY=window.scrollY;
+    // The KPI summary stays pinned at all times; only the title/hero
+    // block above it collapses once scrolled, and only expands again
+    // once the page is back at the very top.
     let ticking=false;
     function onScroll(){
       const y=Math.max(0,window.scrollY);
-      if(y<=TOP_THRESHOLD) showHeader();
-      else if(y>lastY && y>header.offsetHeight) hideHeader();
-      lastY=y;
+      if(y<=TOP_THRESHOLD) expandHero(); else collapseHero();
+      updateStickyOffset();
       ticking=false;
     }
     window.addEventListener("scroll",()=>{
       if(!ticking){requestAnimationFrame(onScroll);ticking=true;}
     },{passive:true});
+    header.addEventListener("transitionend",updateStickyOffset);
 
-    // Keep focused fields clear of the header: pull it out of the way as
-    // soon as a field gets focus, then re-check once the on-screen
-    // keyboard has finished resizing the viewport.
+    // Keep focused fields clear of the header: collapse the hero
+    // immediately, then re-check once the on-screen keyboard has
+    // finished resizing the viewport.
     document.addEventListener("focusin",e=>{
       if(!e.target.matches("input,textarea")) return;
-      hideHeader();
+      collapseHero();
       requestAnimationFrame(()=>e.target.scrollIntoView({block:"center"}));
+      setTimeout(()=>e.target.scrollIntoView({block:"center"}),300);
     });
   }
 

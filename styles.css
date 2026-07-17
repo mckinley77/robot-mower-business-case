@@ -8,9 +8,11 @@
 *{box-sizing:border-box}
 body{margin:0;background:var(--paper);color:var(--ink);font-family:Arial,Helvetica,sans-serif;font-size:17px;line-height:1.5}
 .wrap{max-width:1080px;margin:auto;padding:28px 20px 60px}
-.sticky-header{position:sticky;top:0;z-index:40;background:var(--paper);padding-bottom:10px;box-shadow:0 10px 14px -10px rgba(24,61,39,.18);transition:transform .25s ease;will-change:transform}
-.sticky-header.is-hidden{transform:translateY(-100%);box-shadow:none}
-.hero{border-bottom:1px solid var(--rule);padding-bottom:14px}
+.sticky-header{position:sticky;top:0;z-index:40;background:var(--paper);padding-bottom:10px;box-shadow:0 10px 14px -10px rgba(24,61,39,.18)}
+.hero{border-bottom:1px solid var(--rule);padding-bottom:14px;display:grid;grid-template-rows:1fr;transition:grid-template-rows .28s ease,border-color .28s ease,padding-bottom .28s ease}
+.hero-inner{overflow:hidden;min-height:0;transition:opacity .2s ease;opacity:1}
+.sticky-header.is-collapsed .hero{grid-template-rows:0fr;border-color:transparent;padding-bottom:0}
+.sticky-header.is-collapsed .hero-inner{opacity:0}
 .eyebrow{font-size:14px;letter-spacing:.1em;text-transform:uppercase;color:#8a641f;font-weight:700}
 h1{margin:6px 0 6px;color:var(--deep);font-size:40px;line-height:1.08}
 .sub{margin:0;color:#3f4b3f;font-size:18px;font-weight:600;line-height:1.4}
