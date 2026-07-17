@@ -105,13 +105,13 @@
       status("Creating PDF…");
       const {file}=makePdf(builder,filenamePrefix);
       if(await tryShare(file,"PDF ready — choose Print from the share sheet"))return;
-      // Browsers without file sharing: open the PDF in a new tab so it
-      // can be printed from the browser's own PDF viewer.
+      // Browsers without file sharing: navigate the current tab to the
+      // PDF. Opening blob: URLs in a *new* tab/window is unreliable on
+      // mobile Safari and Chrome (it silently does nothing); navigating
+      // the same tab works, and the browser's back button returns here.
       const url=URL.createObjectURL(file);
-      const tab=window.open(url,"_blank");
-      if(!tab)throw new Error("The browser blocked the new tab. Please allow pop-ups for this file.");
-      setTimeout(()=>URL.revokeObjectURL(url),120000);
-      status("PDF opened — use the PDF viewer’s Print button");
+      status("Opening PDF — use your browser’s back button to return here");
+      window.location.href=url;
     }catch(e){console.error(e);status("PDF could not be opened",true);alert(e.message);}
   }
 
