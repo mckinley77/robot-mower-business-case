@@ -64,34 +64,52 @@
     const el=document.getElementById("pdfStatus"); if(!el) return;
     el.textContent=message; el.style.color=error?"#a13b2d":"#183d27";
   }
-  function makePdf(builder){
+  function makePdf(builder,filenamePrefix){
     recalc();
     const organisation=(document.getElementById("organisation")?.value||"").trim();
     const bytes=builder(window.latestReportData,organisation);
-    return {blob:new Blob([bytes],{type:"application/pdf"}),organisation};
+    const safe=organisation.replace(/[^a-z0-9]+/gi,"_").replace(/^_+|_+$/g,"");
+    const filename=`${filenamePrefix}_${safe||"Report"}.pdf`;
+    return {file:new File([bytes],filename,{type:"application/pdf"}),filename};
   }
-  function downloadPdf(builder,filenamePrefix){
+  // Mobile Safari/Chrome often ignore the <a download> filename — and the
+  // "open in a new tab" trick — for blob: PDFs, giving a generic or
+  // random filename instead. The native share sheet's Save/Print actions
+  // use the real filename we give it here, so it's tried first.
+  async function tryShare(file,successMessage){
+    if(!navigator.canShare?.({files:[file]}))return false;
+    try{
+      await navigator.share({files:[file]});
+      status(successMessage);
+    }catch(e){
+      if(e.name!=="AbortError")throw e;
+      status("");
+    }
+    return true;
+  }
+  async function downloadPdf(builder,filenamePrefix){
     try{
       status("Creating PDF…");
-      const {blob,organisation}=makePdf(builder);
-      const url=URL.createObjectURL(blob);
+      const {file,filename}=makePdf(builder,filenamePrefix);
+      if(await tryShare(file,"PDF ready — choose Save to Files or Print from the share sheet"))return;
+      const url=URL.createObjectURL(file);
       const a=document.createElement("a");
-      const safe=organisation.replace(/[^a-z0-9]+/gi,"_").replace(/^_+|_+$/g,"");
-      a.href=url; a.download=`${filenamePrefix}_${safe||"Report"}.pdf`;
+      a.href=url; a.download=filename;
       document.body.appendChild(a); a.click(); a.remove();
       setTimeout(()=>URL.revokeObjectURL(url),5000);
       status("PDF downloaded");
     }catch(e){console.error(e);status("PDF could not be created",true);alert("The PDF could not be created: "+e.message);}
   }
-  function openPdf(builder){
+  async function openPdf(builder,filenamePrefix){
     try{
-      // Open a blank tab synchronously so popup blockers do not reject it.
-      const tab=window.open("about:blank","_blank");
-      if(!tab) throw new Error("The browser blocked the new tab. Please allow pop-ups for this file.");
       status("Creating PDF…");
-      const {blob}=makePdf(builder);
-      const url=URL.createObjectURL(blob);
-      tab.location.href=url;
+      const {file}=makePdf(builder,filenamePrefix);
+      if(await tryShare(file,"PDF ready — choose Print from the share sheet"))return;
+      // Browsers without file sharing: open the PDF in a new tab so it
+      // can be printed from the browser's own PDF viewer.
+      const url=URL.createObjectURL(file);
+      const tab=window.open(url,"_blank");
+      if(!tab)throw new Error("The browser blocked the new tab. Please allow pop-ups for this file.");
       setTimeout(()=>URL.revokeObjectURL(url),120000);
       status("PDF opened — use the PDF viewer’s Print button");
     }catch(e){console.error(e);status("PDF could not be opened",true);alert(e.message);}
@@ -159,9 +177,9 @@
 
   ids.forEach(id=>document.getElementById(id)?.addEventListener("input",recalc));
   document.getElementById("pdfBtn")?.addEventListener("click",()=>downloadPdf(buildBusinessCasePDF,"Robotic_Mowing_Business_Case"));
-  document.getElementById("printPdfBtn")?.addEventListener("click",()=>openPdf(buildBusinessCasePDF));
+  document.getElementById("printPdfBtn")?.addEventListener("click",()=>openPdf(buildBusinessCasePDF,"Robotic_Mowing_Business_Case"));
   document.getElementById("explainerPdfBtn")?.addEventListener("click",()=>downloadPdf(buildMethodologyPDF,"How_the_Figures_Are_Derived"));
-  document.getElementById("printExplainerPdfBtn")?.addEventListener("click",()=>openPdf(buildMethodologyPDF));
+  document.getElementById("printExplainerPdfBtn")?.addEventListener("click",()=>openPdf(buildMethodologyPDF,"How_the_Figures_Are_Derived"));
   document.getElementById("resetBtn")?.addEventListener("click",()=>{ids.forEach(id=>{const el=document.getElementById(id);if(el)el.value=defaults[id]??"";});recalc();status("");});
   recalc();
 })();
