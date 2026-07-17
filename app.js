@@ -87,16 +87,25 @@
     }
     return true;
   }
+  function bytesToBase64(bytes){
+    let binary="";
+    const chunk=0x8000;
+    for(let i=0;i<bytes.length;i+=chunk)binary+=String.fromCharCode.apply(null,bytes.subarray(i,i+chunk));
+    return btoa(binary);
+  }
   async function downloadPdf(builder,filenamePrefix){
     try{
       status("Creating PDF…");
       const {file,filename}=makePdf(builder,filenamePrefix);
       if(await tryShare(file,"PDF ready — choose Save to Files or Print from the share sheet"))return;
-      const url=URL.createObjectURL(file);
+      // Safari has a long-standing bug where it ignores the download
+      // attribute's filename for blob: URLs specifically, inventing a
+      // random one instead. A self-contained data: URI sidesteps it.
+      const bytes=new Uint8Array(await file.arrayBuffer());
       const a=document.createElement("a");
-      a.href=url; a.download=filename;
+      a.href=`data:application/pdf;base64,${bytesToBase64(bytes)}`;
+      a.download=filename;
       document.body.appendChild(a); a.click(); a.remove();
-      setTimeout(()=>URL.revokeObjectURL(url),5000);
       status("PDF downloaded");
     }catch(e){console.error(e);status("PDF could not be created",true);alert("The PDF could not be created: "+e.message);}
   }
