@@ -90,10 +90,11 @@ function buildBusinessCasePDF(r, organisation){
   const rows=[
     ['Fuel / Electricity',gbp(r.currentFuel),gbp(r.hybridFuel+r.hybridElectric)],
     ['Maintenance & Repairs',gbp(r.currentMaint),gbp(r.hybridMowerMaint+r.hybridRobotMaint+(r.backupMowerCost||0))],
+    ['New Machine Investment (Annualised)',gbp(r.currentCapital),gbp(r.hybridRobotCapital)],
     ['Total Annual Cash Cost',gbp(r.currentTotal),gbp(r.hybridTotal)]
   ];
-  rows.forEach((d,i)=>{text(c,d[0],tx+2,y+5,11.3,i===2?'F4':'F1',black);text(c,d[1],tx+c1+c2-5,y+5,11.3,i===2?'F4':'F1',black,'right');text(c,d[2],tx+tw-5,y+5,11.3,i===2?'F4':'F1',black,'right');y+=rowH;});
-  rect(c,tx,y,tw,29,pale,null);text(c,r.saving>=0?'Annual Cash Saving':'Additional Annual Cash Cost',tx+2,y+6,11.3,'F4',black);text(c,savingValue,tx+tw-5,y+6,11.3,'F4',black,'right');y+=53;
+  rows.forEach((d,i)=>{const bold=i===rows.length-1;text(c,d[0],tx+2,y+5,11.3,bold?'F4':'F1',black);text(c,d[1],tx+c1+c2-5,y+5,11.3,bold?'F4':'F1',black,'right');text(c,d[2],tx+tw-5,y+5,11.3,bold?'F4':'F1',black,'right');y+=rowH;});
+  rect(c,tx,y,tw,29,pale,null);text(c,r.saving>=0?'Annual Cash Saving':'Additional Annual Cash Cost',tx+2,y+6,11.3,'F4',black);text(c,savingValue,tx+tw-5,y+6,11.3,'F4',black,'right');y+=25;
   const assessP1='The direct annual cash saving is only one measure of value. For many organisations, the wider operational benefits of robotic mowing are likely to make an even greater contribution to long-term performance, sustainability and playability.';
   const assessP2="Based on the information entered into the Generator, a hybrid robotic mowing strategy appears to offer worthwhile financial and operational benefits and merits serious consideration whenever conventional mowing equipment is due for replacement. Final investment decisions should take account of local conditions, supplier quotations and the organisation\'s wider strategic objectives.";
   const assessSize=11.0,assessLeading=14.3,assessMaxW=W-2*M-14;
@@ -107,9 +108,9 @@ function buildBusinessCasePDF(r, organisation){
   para(c,assessP2,M+7,ay,assessSize,assessMaxW,assessLeading,'F1');
   const fy=720;
   line(c,M,fy-12,W-M,fy-12,rule,.6);
-  text(c,'Maurice McKinley BSc CEng MICE',M,fy,9.8,'F2',green);
-  text(c,'The Sustainable Golf Course Project',M,fy+16,9.2,'F1',black);
-  const contactX=M+300;
+  text(c,'Maurice McKinley BSc CEng MICE',M+6,fy,9.8,'F2',green);
+  text(c,'The Sustainable Golf Course Project',M+6,fy+16,9.2,'F1',black);
+  const contactX=M+306;
   text(c,'Email: mckinley77@gmail.com',contactX,fy,9.0,'F1',black);
   text(c,'Tel: +44 7544 096463',contactX,fy+16,9.0,'F1',black);
   text(c,'Website: www.mmck.solutions',contactX,fy+32,9.0,'F1',black);

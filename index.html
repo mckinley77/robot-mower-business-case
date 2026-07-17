@@ -63,10 +63,10 @@
 </section>
 <section class="card">
 <h2>4. Assumptions</h2>
-<p class="note">The conventional mower continues to maintain the fairways outside the robot area.</p>
-<p class="note">Annual cash savings include direct operating costs only: diesel, electricity, maintenance and repairs.</p>
+<p class="note">This compares two ways of replacing the machine due for renewal: a new conventional mower, or a robotic system. Any other conventional mower the club retains continues to maintain the fairways outside the robot area either way, and is unaffected by this decision.</p>
+<p class="note">Annual cash savings include direct operating costs (diesel, electricity, maintenance and repairs) plus the annualised investment cost of whichever machine is bought — a new conventional mower in the Conventional column, or the robot system in the Hybrid column — based on each one's expected working life.</p>
 <p class="note">Greenkeeper employment costs are assumed to remain unchanged. Released capacity is shown separately and is not added to the annual cash saving.</p>
-<p class="note">The remaining conventional mower maintenance allowance is reduced in proportion to the area transferred to robots.</p>
+<p class="note">The conventional maintenance allowance for the area transferred to robots is removed accordingly, since that area no longer needs conventional mowing.</p>
 </section>
 </div>
 <div class="message">
@@ -82,7 +82,7 @@
 <p class="assumptions-intro">
     These pale blue values are suitable for most initial assessments. They remain fully editable.
   </p>
-<div class="assumptions-grid"><div class="field assumption-field"><div><label>Mowing weeks per year</label></div><div class="input"><input id="weeksYear" type="number" value="30"/><span class="unit">weeks/year</span></div></div><div class="field assumption-field"><div><label>Average greenkeeper hourly cost</label><div class="note">Including National Insurance, pension and other employment costs.</div></div><div class="input"><input id="staffCost" step="0.5" type="number" value="18"/><span class="unit">£/hour</span></div></div><div class="field assumption-field"><div><label>Diesel price</label></div><div class="input"><input id="dieselPrice" step="0.01" type="number" value="1.15"/><span class="unit">£/litre</span></div></div><div class="field assumption-field"><div><label>Annual cost of retained backup / presentation mower</label><div class="note">For clubs moving fully or almost fully to robots while retaining one conventional mower.</div></div><div class="input"><input id="backupMowerCost" type="number" value="0"/><span class="unit">£/year</span></div></div><div class="field assumption-field"><div><label>Electricity price</label><div class="note">Annual electricity use is calculated from the area mown, using a planning allowance of 1.0 kWh per 1,000 m².</div></div><div class="input"><input id="electricityPrice" step="0.01" type="number" value="0.30"/><span class="unit">£/kWh</span></div></div><div class="field assumption-field"><div><label>Annual maintenance per robot</label></div><div class="input"><input id="robotMaint" type="number" value="1500"/><span class="unit">£/robot/year</span></div></div><div class="field assumption-field"><div><label>Robot supervision and routine attention</label><div class="note">Including routine checks, cleaning, freeing stuck or clogged machines and blade changes.</div></div><div class="input"><input id="supervision" step="0.5" type="number" value="5"/><span class="unit">hours/week</span></div></div></div>
+<div class="assumptions-grid"><div class="field assumption-field"><div><label>Mowing weeks per year</label></div><div class="input"><input id="weeksYear" type="number" value="30"/><span class="unit">weeks/year</span></div></div><div class="field assumption-field"><div><label>Average greenkeeper hourly cost</label><div class="note">Including National Insurance, pension and other employment costs.</div></div><div class="input"><input id="staffCost" step="0.5" type="number" value="18"/><span class="unit">£/hour</span></div></div><div class="field assumption-field"><div><label>Diesel price</label></div><div class="input"><input id="dieselPrice" step="0.01" type="number" value="1.15"/><span class="unit">£/litre</span></div></div><div class="field assumption-field"><div><label>Annual cost of retained backup / presentation mower</label><div class="note">For clubs moving fully or almost fully to robots while retaining one conventional mower.</div></div><div class="input"><input id="backupMowerCost" type="number" value="0"/><span class="unit">£/year</span></div></div><div class="field assumption-field"><div><label>Electricity price</label><div class="note">Annual electricity use is calculated from the area mown, using a planning allowance of 1.0 kWh per 1,000 m².</div></div><div class="input"><input id="electricityPrice" step="0.01" type="number" value="0.30"/><span class="unit">£/kWh</span></div></div><div class="field assumption-field"><div><label>Annual maintenance per robot</label></div><div class="input"><input id="robotMaint" type="number" value="1500"/><span class="unit">£/robot/year</span></div></div><div class="field assumption-field"><div><label>Robot supervision and routine attention</label><div class="note">Including routine checks, cleaning, freeing stuck or clogged machines and blade changes.</div></div><div class="input"><input id="supervision" step="0.5" type="number" value="5"/><span class="unit">hours/week</span></div></div><div class="field assumption-field"><div><label>Expected working life of a new conventional mower</label><div class="note">Used to spread the cost of a new conventional mower (the alternative to a robot) across an annual investment allowance.</div></div><div class="input"><input id="mowerLife" min="1" step="1" type="number" value="10"/><span class="unit">years</span></div></div><div class="field assumption-field"><div><label>Expected working life of the robotic mower</label><div class="note">Used to spread the robot's purchase cost across an annual investment allowance.</div></div><div class="input"><input id="robotLife" min="1" step="1" type="number" value="7"/><span class="unit">years</span></div></div></div>
 </details>
 <section class="results">
 <h2>Annual Cash Cost Comparison</h2>
@@ -91,6 +91,7 @@
 <tbody>
 <tr><td>Diesel / electricity</td><td id="cEnergy">£0</td><td id="hEnergy">£0</td></tr>
 <tr><td>Maintenance and repairs</td><td id="cMaint">£0</td><td id="hMaint">£0</td></tr>
+<tr><td>New machine investment (annualised)</td><td id="cCapital">£0</td><td id="hCapital">£0</td></tr>
 <tr class="total"><td>Total annual cash cost</td><td id="cTotal">£0</td><td id="hTotal">£0</td></tr>
 <tr class="saving"><td>Annual cash saving</td><td>—</td><td id="saving">£0</td></tr>
 </tbody>
@@ -105,6 +106,7 @@
 <tr><td>Robot system</td><td id="capRobot">£35,000</td></tr>
 </tbody>
 </table>
+<p class="note" style="margin-top:10px">These are the two one-off options for the machine being replaced. Each is spread over its own expected working life (see Assumptions) to give the annualised investment figures used in the cash cost comparison above.</p>
 </section>
 <section class="card">
 <h2>Benefits Not Included in the Financial Comparison</h2>
