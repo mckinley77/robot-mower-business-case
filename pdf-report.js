@@ -60,7 +60,7 @@ function buildBusinessCasePDF(r, organisation){
   text(c,'Hybrid Robotic',tx+tw-5,y,11.3,'F4',black,'right');y+=24;
   const rows=[
     ['Fuel / Electricity',gbp(r.currentFuel),gbp(r.hybridFuel+r.hybridElectric)],
-    ['Maintenance & Repairs',gbp(r.currentMaint),gbp(r.hybridMowerMaint+r.hybridRobotMaint+(r.backupMowerCost||0))],
+    ['Maintenance & Repairs',gbp(r.currentMaint),gbp(r.hybridRobotMaint+(r.backupMowerCost||0))],
     ['New Machine Investment (Annualised)',gbp(r.currentCapital),gbp(r.hybridRobotCapital)],
     ['Total Annual Cash Cost',gbp(r.currentTotal),gbp(r.hybridTotal)]
   ];

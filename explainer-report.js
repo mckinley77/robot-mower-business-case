@@ -7,7 +7,7 @@ function buildMethodologyPDF(r, organisation){
   const oneDp=v=>(Math.round(v*10)/10).toLocaleString('en-GB');
   const price=v=>'£'+v.toFixed(2);
   const hybridEnergy=r.hybridFuel+r.hybridElectric;
-  const hybridMaintTotal=r.hybridMowerMaint+r.hybridRobotMaint+(r.backupMowerCost||0);
+  const hybridMaintTotal=r.hybridRobotMaint+(r.backupMowerCost||0);
   const printedOn=new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
 
   function calcRow(c,y,label,formula,figureLines,result){
@@ -59,9 +59,8 @@ function buildMethodologyPDF(r, organisation){
 
   if(y>640){c=page();y=54;}
   y=calcRow(c,y,'4. Maintenance and repairs',
-    'Conventional: the annual maintenance allowance entered for the conventional mower. Hybrid: that same allowance reduced in proportion to the area transferred to robots, plus each robot’s own annual maintenance allowance, plus any retained backup mower cost.',
+    'Conventional: the annual maintenance allowance entered for the machine being replaced. Hybrid: that allowance is exchanged entirely for each robot’s own annual maintenance allowance, plus any retained backup mower cost — the machine being replaced no longer exists, so none of its maintenance allowance carries over.',
     ['Conventional: '+gbp(r.mowerMaint)+' entered directly',
-     'Hybrid mower share: '+gbp(r.mowerMaint)+' x (1 - '+pct+'%) = '+gbp(r.hybridMowerMaint),
      'Robot maintenance: '+r.robots+' × '+gbp(r.robotMaint)+'/robot = '+gbp(r.hybridRobotMaint)]
      .concat(r.backupMowerCost?['Backup mower: '+gbp(r.backupMowerCost)]:[]),
     'Conventional '+gbp(r.mowerMaint)+'   |   Hybrid '+gbp(hybridMaintTotal));
