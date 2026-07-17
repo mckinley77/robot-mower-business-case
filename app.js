@@ -100,21 +100,6 @@
       status("PDF downloaded");
     }catch(e){console.error(e);status("PDF could not be created",true);alert("The PDF could not be created: "+e.message);}
   }
-  async function openPdf(builder,filenamePrefix){
-    try{
-      status("Creating PDF…");
-      const {file}=makePdf(builder,filenamePrefix);
-      if(await tryShare(file,"PDF ready — choose Print from the share sheet"))return;
-      // Browsers without file sharing: navigate the current tab to the
-      // PDF. Opening blob: URLs in a *new* tab/window is unreliable on
-      // mobile Safari and Chrome (it silently does nothing); navigating
-      // the same tab works, and the browser's back button returns here.
-      const url=URL.createObjectURL(file);
-      status("Opening PDF — use your browser’s back button to return here");
-      window.location.href=url;
-    }catch(e){console.error(e);status("PDF could not be opened",true);alert(e.message);}
-  }
-
   const header=document.querySelector(".sticky-header");
   const TOP_THRESHOLD=4;
 
@@ -177,9 +162,7 @@
 
   ids.forEach(id=>document.getElementById(id)?.addEventListener("input",recalc));
   document.getElementById("pdfBtn")?.addEventListener("click",()=>downloadPdf(buildBusinessCasePDF,"Robotic_Mowing_Business_Case"));
-  document.getElementById("printPdfBtn")?.addEventListener("click",()=>openPdf(buildBusinessCasePDF,"Robotic_Mowing_Business_Case"));
   document.getElementById("explainerPdfBtn")?.addEventListener("click",()=>downloadPdf(buildMethodologyPDF,"How_the_Figures_Are_Derived"));
-  document.getElementById("printExplainerPdfBtn")?.addEventListener("click",()=>openPdf(buildMethodologyPDF,"How_the_Figures_Are_Derived"));
   document.getElementById("resetBtn")?.addEventListener("click",()=>{ids.forEach(id=>{const el=document.getElementById(id);if(el)el.value=defaults[id]??"";});recalc();status("");});
   recalc();
 })();
