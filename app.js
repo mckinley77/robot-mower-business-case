@@ -135,6 +135,19 @@
       requestAnimationFrame(()=>e.target.scrollIntoView({block:"center"}));
       setTimeout(()=>e.target.scrollIntoView({block:"center"}),300);
     });
+
+    // On-screen keyboards on mobile shrink/scroll the *visual* viewport
+    // while position:sticky tracks the *layout* viewport, so the pinned
+    // header can end up rendered above the visible screen. Re-anchor it
+    // to whatever the visual viewport is actually showing.
+    if(window.visualViewport){
+      const vv=window.visualViewport;
+      function syncViewportOffset(){
+        header.style.transform=vv.offsetTop?`translateY(${vv.offsetTop}px)`:"";
+      }
+      vv.addEventListener("resize",syncViewportOffset);
+      vv.addEventListener("scroll",syncViewportOffset);
+    }
   }
 
   window.addEventListener("resize",updateStickyOffset);
