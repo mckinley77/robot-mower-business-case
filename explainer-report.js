@@ -7,7 +7,7 @@ function buildMethodologyPDF(r, organisation){
   const oneDp=v=>(Math.round(v*10)/10).toLocaleString('en-GB');
   const price=v=>'£'+v.toFixed(2);
   const hybridEnergy=r.hybridFuel+r.hybridElectric;
-  const hybridMaintTotal=r.hybridRobotMaint+(r.backupMowerCost||0);
+  const hybridMaintTotal=r.hybridRobotMaint+(r.backupMowerCost||0)+(r.extraMaint||0);
   const printedOn=new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
 
   function calcRow(c,y,label,formula,figureLines,result){
@@ -59,10 +59,11 @@ function buildMethodologyPDF(r, organisation){
 
   if(y>640){c=page();y=54;}
   y=calcRow(c,y,'4. Maintenance and repairs',
-    'Conventional: the annual maintenance allowance entered for the machine being replaced. Hybrid: that allowance is exchanged entirely for each robot’s own annual maintenance allowance, plus any retained backup mower cost — the machine being replaced no longer exists, so none of its maintenance allowance carries over.',
+    'Conventional: the annual maintenance allowance entered for the machine being replaced. Hybrid: that allowance is exchanged entirely for each robot’s own annual maintenance allowance, plus any retained backup mower cost, plus an allowance for the extra wear on the remaining conventional mower(s) that now cover the cutting the robot doesn’t do — the machine being replaced no longer exists, so none of its own maintenance allowance carries over.',
     ['Conventional: '+gbp(r.mowerMaint)+' entered directly',
      'Robot maintenance: '+r.robots+' × '+gbp(r.robotMaint)+'/robot = '+gbp(r.hybridRobotMaint)]
-     .concat(r.backupMowerCost?['Backup mower: '+gbp(r.backupMowerCost)]:[]),
+     .concat(r.backupMowerCost?['Backup mower: '+gbp(r.backupMowerCost)]:[])
+     .concat(r.extraMaint?['Extra maintenance on remaining mower(s): '+gbp(r.extraMaint)]:[]),
     'Conventional '+gbp(r.mowerMaint)+'   |   Hybrid '+gbp(hybridMaintTotal));
 
   y=calcRow(c,y,'5. New machine investment, annualised',
@@ -103,6 +104,7 @@ function buildMethodologyPDF(r, organisation){
     ['Diesel price',price(r.dieselPrice)+'/litre'],
     ['Electricity price',price(r.electricityPrice)+'/kWh'],
     ['Annual maintenance per robot',gbp(r.robotMaint)+'/robot/year'],
+    ['Extra maintenance on remaining mower(s)',gbp(r.extraMaint)+'/year'],
     ['Robot supervision and routine attention',oneDp(r.supervision)+' hrs/week'],
     ['Expected working life, conventional mower',r.mowerLifeYears+' years'],
     ['Expected working life, robotic mower',r.robotLifeYears+' years']

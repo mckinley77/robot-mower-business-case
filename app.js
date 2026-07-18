@@ -1,6 +1,6 @@
 "use strict";
 (() => {
-  const ids=["organisation","courseArea","robotPct","hoursPerCut","cutsWeek","weeksYear","staffCost","mowerCost","dieselUse","dieselPrice","mowerMaint","robotCost","robotCapacity","electricityPrice","robotMaint","supervision","backupMowerCost","mowerLife","robotLife"];
+  const ids=["organisation","courseArea","robotPct","hoursPerCut","cutsWeek","weeksYear","staffCost","mowerCost","dieselUse","dieselPrice","mowerMaint","robotCost","robotCapacity","electricityPrice","robotMaint","supervision","backupMowerCost","extraMaint","mowerLife","robotLife"];
   const defaults={};
   ids.forEach(id=>{const el=document.getElementById(id); if(el) defaults[id]=el.value;});
   const n=id=>parseFloat(document.getElementById(id)?.value)||0;
@@ -25,13 +25,14 @@
     const currentMaint=n("mowerMaint");
     const hybridRobotMaint=robots*n("robotMaint");
     const backupMowerCost=n("backupMowerCost");
+    const extraMaint=n("extraMaint");
     const systemCost=robots*n("robotCost");
     const mowerLifeYears=Math.max(1,n("mowerLife"));
     const robotLifeYears=Math.max(1,n("robotLife"));
     const currentCapital=n("mowerCost")/mowerLifeYears;
     const hybridRobotCapital=systemCost/robotLifeYears;
     const currentTotal=currentFuel+currentMaint+currentCapital;
-    const hybridTotal=hybridFuel+hybridElectric+hybridRobotMaint+backupMowerCost+hybridRobotCapital;
+    const hybridTotal=hybridFuel+hybridElectric+hybridRobotMaint+backupMowerCost+extraMaint+hybridRobotCapital;
     const saving=currentTotal-hybridTotal;
 
     setText("robotArea","(= "+num(robotArea)+" m²)");
@@ -43,7 +44,7 @@
     setText("cEnergy",gbp(currentFuel));
     setText("hEnergy",gbp(hybridFuel+hybridElectric));
     setText("cMaint",gbp(currentMaint));
-    setText("hMaint",gbp(hybridRobotMaint+backupMowerCost));
+    setText("hMaint",gbp(hybridRobotMaint+backupMowerCost+extraMaint));
     setText("cCapital",gbp(currentCapital));
     setText("hCapital",gbp(hybridRobotCapital));
     setText("cTotal",gbp(currentTotal));
@@ -54,7 +55,7 @@
     document.getElementById("kSaving")?.classList.toggle("negative",saving<0);
     document.getElementById("saving")?.classList.toggle("negative",saving<0);
 
-    window.latestReportData={robots,systemCost,saving,extraHours,extraValue,currentFuel,hybridFuel,hybridElectric,currentMaint,hybridRobotMaint,currentCapital,hybridRobotCapital,currentTotal,hybridTotal,robotArea,energyUseKWh,backupMowerCost,
+    window.latestReportData={robots,systemCost,saving,extraHours,extraValue,currentFuel,hybridFuel,hybridElectric,currentMaint,hybridRobotMaint,currentCapital,hybridRobotCapital,currentTotal,hybridTotal,robotArea,energyUseKWh,backupMowerCost,extraMaint,
       area,robotPct:n("robotPct"),robotCapacity:n("robotCapacity"),hoursPerCut:n("hoursPerCut"),cutsWeek:n("cutsWeek"),weeksYear:n("weeksYear"),annualHours,mowingHoursAvoided,supervisionHours,supervision:n("supervision"),staffCost:n("staffCost"),
       dieselUse:n("dieselUse"),dieselPrice:n("dieselPrice"),electricityPrice:n("electricityPrice"),mowerMaint:n("mowerMaint"),robotMaint:n("robotMaint"),mowerCost:n("mowerCost"),robotCost:n("robotCost"),mowerLifeYears,robotLifeYears};
   }
