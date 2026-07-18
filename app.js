@@ -45,6 +45,12 @@
     setText("hEnergy",gbp(hybridFuel+hybridElectric));
     setText("cMaint",gbp(currentMaint));
     setText("hMaint",gbp(hybridRobotMaint+backupMowerCost+extraMaint));
+    setText("hMaintRobotLabel","Robot maintenance ("+robots+" × "+gbp(n("robotMaint"))+")");
+    setText("hMaintRobot",gbp(hybridRobotMaint));
+    setText("hMaintExtra",gbp(extraMaint));
+    setText("hMaintBackup",gbp(backupMowerCost));
+    document.getElementById("rowMaintExtra")?.classList.toggle("hidden",extraMaint<=0);
+    document.getElementById("rowMaintBackup")?.classList.toggle("hidden",backupMowerCost<=0);
     setText("cCapital",gbp(currentCapital));
     setText("hCapital",gbp(hybridRobotCapital));
     setText("cTotal",gbp(currentTotal));
