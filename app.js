@@ -2,7 +2,7 @@
 (() => {
   const ids=["organisation","courseArea","robotPct","hoursPerCut","cutsWeek","weeksYear","staffCost","mowerCost","dieselUse","dieselPrice","mowerMaint","robotCost","robotCapacity","electricityPrice","robotMaint","supervision","backupMowerCost","extraMaint","mowerLife","robotLife"];
   const defaults={};
-  ids.forEach(id=>{const el=document.getElementById(id); if(el) defaults[id]=el.value;});
+  ids.forEach(id=>{const el=document.getElementById(id); if(el) defaults[id]=el.defaultValue;});
   const n=id=>parseFloat(document.getElementById(id)?.value)||0;
   const gbp=v=>(v<0?"−£":"£")+Math.abs(Math.round(v)).toLocaleString("en-GB");
   const num=v=>Math.round(v).toLocaleString("en-GB");
