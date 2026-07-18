@@ -140,8 +140,8 @@ button{padding:11px 17px;border-radius:9px;border:1px solid var(--deep);font-wei
 :root{
   --input-gold:#f4e8c7;
   --input-gold-border:#d7c485;
-  --assumption-blue:#e3f0fb;
-  --assumption-blue-border:#9ebfda;
+  --assumption-blue:#cfe6f7;
+  --assumption-blue-border:#8fbfda;
 }
 
 .guide-swatch{
