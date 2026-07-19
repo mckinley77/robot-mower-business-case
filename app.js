@@ -147,24 +147,75 @@
     header.addEventListener("transitionend",updateStickyOffset);
 
     // Keep focused fields clear of the header: collapse the hero
-    // immediately, then re-check once the on-screen keyboard has
-    // finished resizing the viewport.
+    // immediately, then center the field once it's safe to measure.
     document.addEventListener("focusin",e=>{
       if(!e.target.matches("input,textarea")) return;
+      const alreadyCollapsed=header.classList.contains("is-collapsed");
       collapseHero();
-      requestAnimationFrame(()=>e.target.scrollIntoView({block:"center"}));
-      setTimeout(()=>e.target.scrollIntoView({block:"center"}),300);
+      const centerField=()=>e.target.scrollIntoView({block:"center"});
+      if(alreadyCollapsed){
+        requestAnimationFrame(centerField);
+      }else{
+        // The hero-collapse transition changes the header's height, which
+        // shifts every field below it. Centering immediately measures
+        // against a header that's still mid-collapse, so the field lands
+        // back underneath it once the animation actually finishes — wait
+        // for that first (transitionend, with a timeout fallback in case
+        // it doesn't fire, e.g. under prefers-reduced-motion).
+        header.addEventListener("transitionend",centerField,{once:true});
+        setTimeout(centerField,320);
+      }
+      // Re-check once the on-screen keyboard has actually finished
+      // resizing the viewport. That's a separate animation from the
+      // header's, and — critically — the *first* time the keyboard opens
+      // in a session it can take noticeably longer to settle (IME
+      // start-up cost) than on later opens, which is why a fixed delay
+      // here previously fixed every field except the first one. Driving
+      // this off the real resize/orientationchange signal (debounced,
+      // since the animation fires a burst of them) avoids having to
+      // guess a duration at all; a generous timeout remains only as a
+      // last-resort fallback for browsers that fire neither event.
+      let settleTimer=setTimeout(centerField,700);
+      const onViewportSettle=()=>{
+        clearTimeout(settleTimer);
+        settleTimer=setTimeout(centerField,120);
+      };
+      window.addEventListener("resize",onViewportSettle);
+      window.visualViewport?.addEventListener("resize",onViewportSettle);
+      const stopWatching=()=>{
+        clearTimeout(settleTimer);
+        window.removeEventListener("resize",onViewportSettle);
+        window.visualViewport?.removeEventListener("resize",onViewportSettle);
+      };
+      e.target.addEventListener("blur",stopWatching,{once:true});
     });
 
-    // On-screen keyboards on mobile shrink/scroll the *visual* viewport
-    // while position:sticky tracks the *layout* viewport, so the pinned
-    // header can end up rendered above the visible screen. Re-anchor it
-    // to whatever the visual viewport is actually showing.
-    if(window.visualViewport){
+    // iOS Safari doesn't anchor position:sticky elements to the *visual*
+    // viewport when the on-screen keyboard is open — the header can end up
+    // rendered above the visible screen — so it needs manual re-anchoring.
+    // Chromium-based browsers (Chrome, Samsung Internet, DuckDuckGo, etc.)
+    // already handle this correctly at the compositor level; applying our
+    // own transform on top there just knocks the header out of sync with
+    // the real caret position, which is what caused it to visibly drift.
+    // All browsers on iOS are WebKit under the hood (Apple requires it),
+    // so this is a platform check, not a "which app" check.
+    const isIOS=/iP(hone|od|ad)/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+    if(isIOS&&window.visualViewport){
       const vv=window.visualViewport;
+      let keyboardLikelyOpen=false;
       function syncViewportOffset(){
+        if(!keyboardLikelyOpen){header.style.transform="";return;}
         header.style.transform=vv.offsetTop?`translateY(${vv.offsetTop}px)`:"";
       }
+      document.addEventListener("focusin",e=>{
+        if(!e.target.matches("input,textarea")) return;
+        keyboardLikelyOpen=true;
+      });
+      document.addEventListener("focusout",e=>{
+        if(!e.target.matches("input,textarea")) return;
+        keyboardLikelyOpen=false;
+        header.style.transform="";
+      });
       vv.addEventListener("resize",syncViewportOffset);
       vv.addEventListener("scroll",syncViewportOffset);
     }
