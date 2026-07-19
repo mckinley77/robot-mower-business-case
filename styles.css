@@ -6,9 +6,10 @@
   --sticky-offset:380px;
 }
 *{box-sizing:border-box}
-body{margin:0;background:var(--paper);color:var(--ink);font-family:Arial,Helvetica,sans-serif;font-size:17px;line-height:1.5}
+html{overflow-x:hidden;overflow-anchor:none}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:Arial,Helvetica,sans-serif;font-size:17px;line-height:1.5;overflow-x:hidden}
 .wrap{max-width:1080px;margin:auto;padding:28px 20px 60px}
-.sticky-header{position:sticky;top:0;z-index:40;background:var(--paper);padding-bottom:10px;box-shadow:0 10px 14px -10px rgba(24,61,39,.18)}
+.sticky-header{position:sticky;top:0;z-index:40;background:var(--paper);padding-bottom:10px;box-shadow:0 10px 14px -10px rgba(24,61,39,.18);overflow-anchor:none}
 .hero{border-bottom:1px solid var(--rule);padding-bottom:14px;display:grid;grid-template-rows:1fr;transition:grid-template-rows .28s ease,border-color .28s ease,padding-bottom .28s ease}
 .hero-inner{overflow:hidden;min-height:0;transition:opacity .2s ease;opacity:1}
 .sticky-header.is-collapsed .hero{grid-template-rows:0fr;border-color:transparent;padding-bottom:0}
@@ -42,6 +43,13 @@ table{width:100%;border-collapse:collapse;background:var(--card);border:1px soli
 th{background:var(--deep);color:#fff;text-align:right;padding:12px;font-size:12px;text-transform:uppercase}
 th:first-child,td:first-child{text-align:left}
 td{padding:11px 12px;border-top:1px dashed var(--rule);text-align:right}
+/* table-layout:fixed makes the column widths in the colgroup authoritative
+   instead of the browser sizing columns off their content, which is what
+   let this table grow wider than the screen on mobile; overflow-wrap lets
+   long labels and figures break instead of forcing the column wider. */
+.cost-table{table-layout:fixed}
+.cost-table th,.cost-table td:first-child{overflow-wrap:break-word}
+.cost-table td:not(:first-child){white-space:nowrap}
 tr.total td{font-weight:700;background:#eee8d8;border-top:2px solid var(--gold)}
 tr.saving td{font-weight:700;background:var(--pale);color:var(--deep)}
 tr.detail td{padding:7px 12px;border-top:none;font-size:14px;color:var(--soft);font-style:italic}
@@ -72,6 +80,10 @@ button{padding:11px 17px;border-radius:9px;border:1px solid var(--deep);font-wei
   .sticky-header .kpi .value{font-size:13px;margin-top:2px}
   .actions{flex-direction:column;align-items:stretch}
   .actions button{width:100%}
+  .cost-table td{padding:9px 8px;font-size:14.5px}
+  .cost-table th{padding:9px 8px;font-size:10.5px}
+  .cost-table tr.detail td{padding:6px 8px;font-size:12.5px}
+  .cost-table tr.detail td:first-child{padding-left:20px}
 }
 
 @media print{

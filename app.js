@@ -116,7 +116,15 @@
     }catch(e){console.error(e);status("PDF could not be created",true);alert("The PDF could not be created: "+e.message);}
   }
   const header=document.querySelector(".sticky-header");
-  const TOP_THRESHOLD=4;
+  // Hysteresis, not a single threshold: the header only re-expands once
+  // scrolled essentially all the way back to the top, and only collapses
+  // once scrolled a meaningful distance away from it. A single tight
+  // threshold (previously 4px either side) meant ordinary momentum-scroll
+  // bounce right at the top flipped the header between expanded/collapsed
+  // repeatedly — each flip changes the sticky header's height while it's
+  // pinned in place, which is what produced the "jumps about" and "fields
+  // end up behind the header" symptoms on real devices.
+  const EXPAND_AT=0,COLLAPSE_AT=48;
 
   function updateStickyOffset(){
     if(header) document.documentElement.style.setProperty("--sticky-offset",header.offsetHeight+"px");
@@ -137,14 +145,21 @@
     let ticking=false;
     function onScroll(){
       const y=Math.max(0,window.scrollY);
-      if(y<=TOP_THRESHOLD) expandHero(); else collapseHero();
-      updateStickyOffset();
+      if(y<=EXPAND_AT) expandHero(); else if(y>COLLAPSE_AT) collapseHero();
       ticking=false;
     }
     window.addEventListener("scroll",()=>{
       if(!ticking){requestAnimationFrame(onScroll);ticking=true;}
     },{passive:true});
-    header.addEventListener("transitionend",updateStickyOffset);
+    // Track the header's real height continuously (not just after scroll
+    // or transitionend) so --sticky-offset is never stale mid-transition
+    // — e.g. the ~280ms window right after the header starts expanding at
+    // the top, while the user isn't actively generating scroll events.
+    if(window.ResizeObserver){
+      new ResizeObserver(updateStickyOffset).observe(header);
+    }else{
+      header.addEventListener("transitionend",updateStickyOffset);
+    }
 
     // Keep focused fields clear of the header: collapse the hero
     // immediately, then center the field once it's safe to measure.
@@ -175,18 +190,27 @@
       // since the animation fires a burst of them) avoids having to
       // guess a duration at all; a generous timeout remains only as a
       // last-resort fallback for browsers that fire neither event.
-      let settleTimer=setTimeout(centerField,700);
-      const onViewportSettle=()=>{
-        clearTimeout(settleTimer);
-        settleTimer=setTimeout(centerField,120);
-      };
-      window.addEventListener("resize",onViewportSettle);
-      window.visualViewport?.addEventListener("resize",onViewportSettle);
+      //
+      // This must detach itself once that one check has fired. A field
+      // stays focused on mobile even while the user scrolls elsewhere
+      // with the keyboard still open (nothing forces a blur), and if this
+      // listener stayed live it would fire again on the next unrelated
+      // resize — e.g. the browser's address bar collapsing/expanding
+      // during ordinary scrolling — yanking the page back to re-center a
+      // field the user has already scrolled away from on purpose.
       const stopWatching=()=>{
         clearTimeout(settleTimer);
         window.removeEventListener("resize",onViewportSettle);
         window.visualViewport?.removeEventListener("resize",onViewportSettle);
       };
+      const settleOnce=()=>{centerField();stopWatching();};
+      let settleTimer=setTimeout(settleOnce,700);
+      const onViewportSettle=()=>{
+        clearTimeout(settleTimer);
+        settleTimer=setTimeout(settleOnce,120);
+      };
+      window.addEventListener("resize",onViewportSettle);
+      window.visualViewport?.addEventListener("resize",onViewportSettle);
       e.target.addEventListener("blur",stopWatching,{once:true});
     });
 
